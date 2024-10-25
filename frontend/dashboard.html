@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="icon" href="data:," /> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+
+        <div class="section">
+            <div class="button" onclick="loadUsers()">Users</div>
+            <div class="data-container" id="users-container" style="display: none;">
+                <p>Total Users: 0</p> 
+                <ul id="users-list"></ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="button" onclick="loadCategories()">Categories</div>
+            <div class="data-container" id="categories-container" style="display: none;">
+                <p>Total Categories: 0</p>
+                <ul id="categories-list"></ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <label for="category-select">Choose a Category:</label>
+            <select id="category-select">
+                <option value="" selected disabled>Select a category</option>
+                <option value="Metro">Metro</option>
+                <option value="Bus">Bus</option>
+            </select>
+            <div class="button" onclick="loadServices()">Show Services</div>
+            <div class="data-container" id="services-container" style="display: none;">
+                <p>Total Services: 0</p>
+                <ul id="services-list"></ul>
+            </div>
+        </div>
+        
+
+        <div class="section">
+            <div class="button" onclick="loadMostUsed()">Top Used Category & Service</div>
+            <div class="data-container" id="most-used-container" style="display: none;">
+                <p id="most-used-category"></p>
+                <p id="most-used-service"></p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="button" onclick="loadTotalRevenue()">Revenue Generated</div>
+            <div class="data-container" id="total-revenue-container" style="display: none;">
+                <p id="total-revenue-amount"></p>
+                <canvas id="revenueChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() { 
+            async function fetchData(endpoint) {
+                try {
+                    const response = await fetch(endpoint);
+                    if (!response.ok) {
+                        throw new Error(`Error fetching data from ${endpoint}: ${response.statusText}`);
+                    }
+                    return response.json();
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            }
+
+            async function loadUsers() {
+    try {
+        const response = await fetch('http://localhost:8000/view/users');
+        const data = await response.json();
+        
+        if (data) {
+            const usersContainer = document.getElementById('users-container');
+            usersContainer.style.display = 'block'; 
+            usersContainer.querySelector('p').innerHTML = `Total Users: ${data.total}`;
+
+            const usersList = document.getElementById('users-list');
+            usersList.innerHTML = data.users.map(user => `
+                <li>
+                    ${user.FirstName} ${user.LastName || ''}
+                    <span style="color: ${user.BlockedStatus ? 'red' : 'green'};">
+                        (${user.BlockedStatus ? 'Blocked' : 'Active'})
+                    </span>
+                    <span style="color: ${user.InactiveStatus ? 'red' : 'green'};">
+                        (${user.InactiveStatus ? 'Suspended' : 'Active'})
+                    </span>
+                </li>
+            `).join('');
+        }
+    } catch (error) {
+        console.error("Error fetching users:", error);
+    }
+}
+
+async function loadCategories() {
+    try {
+        const response = await fetch('http://localhost:8000/categories');
+        const categories = await response.json();
+
+        if (categories && Array.isArray(categories)) {
+            const categoriesContainer = document.getElementById('categories-container');
+            categoriesContainer.style.display = 'block'; 
+            categoriesContainer.querySelector('p').innerHTML = `Total Categories: ${categories.length}`;
+
+            const categoriesList = document.getElementById('categories-list');
+            categoriesList.innerHTML = categories.map(category => `
+                <li>
+                    <strong>${category.category_name}</strong>
+                    <br>
+                    <img src="${category.image_url}" alt="${category.category_name}" style="width:100px;height:auto;">
+                    <br>
+                    <span>Created At: ${new Date(category.created_at).toLocaleString()}</span>
+                </li>
+            `).join('');
+        }
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+    }
+}
+
+async function loadServices() {
+    const categorySelect = document.getElementById('category-select');
+    const selectedCategory = categorySelect.value;
+
+    if (!selectedCategory) {
+        alert("Please select a category first.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:8000/services/${selectedCategory}`);
+        if (response.ok) {
+            const data = await response.json();
+
+            if (data && data.services && Array.isArray(data.services)) {
+                const servicesContainer = document.getElementById('services-container');
+                servicesContainer.style.display = 'block';
+                servicesContainer.querySelector('p').innerHTML = `Total Services: ${data.services.length}`;
+
+                const servicesList = document.getElementById('services-list');
+                servicesList.innerHTML = data.services.map(service => `<li>${service}</li>`).join('');
+            }
+        } else {
+            console.error("Failed to fetch services:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error fetching services:", error);
+    }
+}
+
+            async function loadMostUsed() {
+                const mostUsedCategory = await fetchData('/admin/most-used-category');
+                const mostUsedService = await fetchData('/admin/most-used-service');
+                document.getElementById('most-used-category').innerText = `Category: ${mostUsedCategory ? mostUsedCategory.name : 'Metro'}`;
+                document.getElementById('most-used-service').innerText = `Service: ${mostUsedService ? mostUsedService.name : 'Nol Card Topup'}`;
+                document.getElementById('most-used-container').style.display = 'block';
+            }
+
+            async function loadTotalRevenue() {
+    try {
+        // Fetch total revenue data
+        const totalRevenueResponse = await fetch('http://localhost:8000/revenue/total');
+        const totalRevenueData = await totalRevenueResponse.json();
+        
+        // Display total revenue amount
+        const totalRevenueContainer = document.getElementById('total-revenue-container');
+        totalRevenueContainer.style.display = 'block';
+        document.getElementById('total-revenue-amount').textContent = `Total Revenue: ₹ ${totalRevenueData.total.toFixed(2)}`;
+
+        // Fetch monthly revenue data for graph
+        const monthlyRevenueResponse = await fetch('http://localhost:8000/revenue/monthly');
+        const monthlyRevenueData = await monthlyRevenueResponse.json();
+        
+        // Extract labels (months) and data points (revenue)
+        const labels = monthlyRevenueData.map(item => item.month);
+        const revenueData = monthlyRevenueData.map(item => item.total);
+
+        // Line graph creation
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Monthly Revenue',
+                    data: revenueData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Revenue (in INR)'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Error fetching revenue data:", error);
+    }
+}
+
+
+            window.loadUsers = loadUsers;
+            window.loadCategories = loadCategories;
+            window.loadServices = loadServices;
+            window.loadMostUsed = loadMostUsed;
+            window.loadTotalRevenue = loadTotalRevenue;
+        });
+    </script>
+</body>
+</html>
+
+

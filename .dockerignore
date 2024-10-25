@@ -1,0 +1,10 @@
+.git
+.vscode
+node_modules
+build/
+dist/
+tmp/
+*.log
+*.pbf  # If you don't need the OSM file inside the Docker container
+DockerDesktopWSL/
+

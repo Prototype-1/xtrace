@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X' Trace</title>
+    <link rel="stylesheet" href="invoice.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Send Invoice</h1>
+        
+        <div class="invoice-card">
+            <form id="sendInvoiceForm" aria-label="Invoice sending form">
+                <div class="form-group">
+                    <label for="userID">User ID</label>
+                    <input 
+                        type="text" 
+                        id="userID" 
+                        name="userID" 
+                        required
+                        aria-required="true"
+                        title="Enter the user ID to send the invoice"
+                        placeholder="Enter user ID"
+                        oninput="fetchUserEmail()"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        readonly
+                        aria-label="User email address"
+                        title="User's email address (automatically populated)"
+                        placeholder="Email will appear here"
+                    >
+                </div>
+                
+                <button 
+                    type="submit"
+                    aria-label="Send invoice"
+                >
+                    Send Invoice
+                </button>
+            </form>
+            
+            <div 
+                id="statusMessage" 
+                class="status-message" 
+                role="status" 
+                aria-live="polite"
+            ></div>
+        </div>
+    </div>
+
+    <script>
+const backendUrl = 'http://localhost:8000'; 
+
+async function fetchUserEmail() {
+    const userID = document.getElementById('userID').value;
+    if (userID) {
+        const response = await fetch(`${backendUrl}/invoices/getUserEmail?userID=${userID}`);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.email) {
+                document.getElementById('email').value = data.email;
+            } else {
+                document.getElementById('email').value = '';
+            }
+        } else {
+            console.error("Failed to fetch user email:", await response.text());
+            document.getElementById('email').value = '';
+        }
+    } else {
+        document.getElementById('email').value = '';
+    }
+}
+
+document.getElementById('sendInvoiceForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const userID = document.getElementById('userID').value;
+    const email = document.getElementById('email').value;
+
+    const response = await fetch('http://localhost:8000/invoices/sendInvoice', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userID: parseInt(userID), email: email }), 
+    });
+
+    console.log('Response:', response);
+
+    if (response.ok) {
+        const successData = await response.json(); 
+        alert(`Invoice sent successfully! Message: ${successData.message}`);
+      
+    } else {
+        const errorData = await response.json();
+        console.error('Failed to send invoice:', errorData);
+        //alert(`Failed to send invoice: ${errorData.error}`);
+        alert(`Failed to send invoice: No invoice found for this user`);
+    }
+});
+    </script>
+</body>
+</html>

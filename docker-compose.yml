@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  go-backend:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - osrm
+    volumes:
+      - ./data:/data
+    environment:
+      - GO_ENV=production
+
+  osrm:
+    image: osrm/osrm-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - /c/Users/Aswin/xtrace/data:/data
+    command: osrm-routed /data/planet_76.233,9.587_77.256,10.214.osrm
+    depends_on:
+      - osrm-extract
+
+  osrm-extract:
+    image: osrm/osrm-backend
+    volumes:
+      - ./data:/data
+    command: osrm-extract -p /opt/car.lua /data/planet_76.233,9.587_77.256,10.214.osm.pbf
+
+  osrm-contract:
+    image: osrm/osrm-backend
+    depends_on:
+      - osrm-extract
+    volumes:
+      - ./data:/data
+    command: osrm-contract /data/planet_76.233,9.587_77.256,10.214.osrm

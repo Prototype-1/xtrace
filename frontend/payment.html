@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X' Trace</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Continue with payment...</h1>
+        
+        <div class="payment-card" role="region" aria-label="Create Payment Form">
+            <h2>Create Payment</h2>
+            <div id="wallet-balance" class="balance-info" role="status" aria-live="polite"></div>
+            <div id="nol-card-balance" class="balance-info" role="status" aria-live="polite"></div>
+            
+            <form id="createPaymentForm" aria-label="Payment Creation Form">
+                <div class="form-group">
+                    <label for="userID">User ID</label>
+                    <input 
+                        type="text" 
+                        id="userID" 
+                        name="userID"
+                        title="Please enter your user ID"
+                        placeholder="Enter your user ID"
+                        aria-required="true"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input 
+                        type="number" 
+                        id="amount" 
+                        name="amount"
+                        title="Please enter the payment amount"
+                        placeholder="Enter amount in INR"
+                        step="0.01"
+                        aria-required="true"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="currency">Currency</label>
+                    <input 
+                        type="text" 
+                        id="currency" 
+                        name="currency"
+                        value="INR"
+                        title="Payment currency (default is INR)"
+                        placeholder="Enter currency code"
+                        aria-required="true"
+                        required
+                    >
+                </div>
+
+                <fieldset class="form-group">
+                    <legend>Payment Type</legend>
+                    <div class="radio-group" role="radiogroup" aria-required="true">
+                        <div class="radio-option">
+                            <input type="radio" id="wallet_topup" name="paymentType" value="wallet_topup" required>
+                            <label for="wallet_topup">Wallet Topup</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="nol_card_topup" name="paymentType" value="nol_card_topup" required>
+                            <label for="nol_card_topup">Nol Card Topup</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="subscription" name="paymentType" value="subscription" required>
+                            <label for="subscription">Subscription</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="booking" name="paymentType" value="booking" required>
+                            <label for="booking">Booking</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div id="cardTypeContainer" class="form-group" style="display:none;">
+                    <label for="cardType">Select Card Type</label>
+                    <select 
+                        id="cardType" 
+                        name="cardType"
+                        title="Please select your card type"
+                        aria-label="Card Type Selection"
+                    >
+                        <option value="">--Select Card Type--</option>
+                        <option value="ordinary">Ordinary</option>
+                        <option value="silver">Silver</option>
+                        <option value="gold">Gold</option>
+                    </select>
+                </div>
+
+                <div id="paymentDetails" class="form-group" style="display:none;">
+                    <label for="id">Payment ID</label>
+                    <input 
+                        type="number" 
+                        id="id" 
+                        name="id"
+                        title="Enter the ID associated with your payment"
+                        placeholder="Enter payment ID"
+                        aria-required="true"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <div class="coupon-section">
+                        <label for="couponCode">Coupon Code</label>
+                        <input 
+                            type="text" 
+                            id="couponCode" 
+                            name="couponCode"
+                            title="Enter coupon code if available"
+                            placeholder="Enter coupon code (optional)"
+                            aria-label="Coupon Code Input"
+                        >
+                        <button 
+                            type="button" 
+                            id="applyCouponButton"
+                            aria-label="Apply Coupon Code"
+                        >Apply Coupon</button>
+                    </div>
+                    <div id="couponDetails" style="display:none;" role="alert" aria-live="polite"></div>
+                </div>
+
+                <button 
+                    type="submit" 
+                    id="btn"
+                    aria-label="Create Payment Order"
+                >Create Order</button>
+            </form>
+            <div id="paymentResponse" role="alert" aria-live="polite"></div>
+        </div>
+
+        <div class="payment-card" role="region" aria-label="Payment Processing">
+            <h2>Proceed to Payment</h2>
+            <form id="orderForm" aria-label="Order Processing Form">
+                <div class="form-group">
+                    <label for="orderIdInput">Order ID</label>
+                    <input 
+                        type="text" 
+                        id="orderIdInput" 
+                        name="orderIdInput"
+                        title="Enter your order ID to proceed with payment"
+                        placeholder="Enter your order ID"
+                        aria-required="true"
+                        required
+                    >
+                    <button 
+                        type="submit" 
+                        id="submitBtn"
+                        aria-label="Submit Order ID"
+                    >Submit</button>
+                </div>
+            </form>
+            <button 
+                id="payButton" 
+                style="display: none;"
+                aria-label="Proceed to Payment"
+            >Pay Now</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
