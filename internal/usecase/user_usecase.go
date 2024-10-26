@@ -60,18 +60,22 @@ func (u *userUsecase) UnsuspendInactiveUsers() error {
         log.Printf("Error fetching suspended users: %v\n", err)
         return err
     }
-
-    for _, user := range users {
-        if user.SuspendedAt != nil && time.Since(*user.SuspendedAt) >= 5*24*time.Hour {
-            user.InactiveStatus = false
-            user.SuspendedAt = nil
-            if err := u.userRepo.UpdateUser(&user); err != nil {
-                log.Printf("Error updating user (ID: %d): %v\n", user.ID, err)
-            } else {
-                log.Printf("User (ID: %d) has been unsuspended.\n", user.ID)
+    successCount := 0
+failureCount := 0
+for _, user := range users {
+    if user.SuspendedAt != nil && time.Since(*user.SuspendedAt) >= 5*24*time.Hour {
+        user.InactiveStatus = false
+        user.SuspendedAt = nil
+        if err := u.userRepo.UpdateUser(&user); err != nil {
+            log.Printf("Error updating user (ID: %d): %v\n", user.ID, err)
+            failureCount++
+        } else {
+            log.Printf("User (ID: %d) has been unsuspended.\n", user.ID)
+            successCount++
             }
         }
     }
+    log.Printf("Unsuspend task completed: %d success, %d failures\n", successCount, failureCount)
     return nil
 }
 

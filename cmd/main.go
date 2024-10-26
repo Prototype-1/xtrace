@@ -97,6 +97,7 @@ func main() {
     go func() {
         for {
             <-ticker.C
+			log.Println("Running unsuspend task...")
             err := userUsecase.UnsuspendInactiveUsers()
             if err != nil {
                 log.Printf("Error running unsuspend task: %v\n", err)
