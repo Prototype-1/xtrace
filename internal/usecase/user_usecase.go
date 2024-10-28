@@ -1,11 +1,12 @@
 package usecase
 
 import (
+	"log"
+	"time"
+
 	"github.com/Prototype-1/xtrace/internal/models"
 	"github.com/Prototype-1/xtrace/internal/repository"
 	"golang.org/x/crypto/bcrypt"
-	"time"
-	"log"
 )
 
 type UserUsecase interface {
