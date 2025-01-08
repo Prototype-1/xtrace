@@ -6,13 +6,19 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/joho/godotenv v1.5.1
+	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.27.0
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.12
 )
 
-require github.com/jung-kurt/gofpdf v1.16.2 // indirect
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/jung-kurt/gofpdf v1.16.2
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
+)
 
 require (
 	cloud.google.com/go/auth v0.9.3 // indirect
