@@ -21,9 +21,15 @@ spec:
         - name: POSTGRES_DB
           value: "xtrace"
         - name: POSTGRES_USER
-          value: "postgres"
+          valueFrom:
+            secretKeyRef:
+              name: xtrace-db-credentials
+              key: DB_USER
         - name: POSTGRES_PASSWORD
-          value: "BrainFog@1996"
+          valueFrom:
+            secretKeyRef:
+              name: xtrace-db-credentials
+              key: DB_PASSWORD
 ---
 apiVersion: v1
 kind: Service
@@ -35,3 +41,4 @@ spec:
   ports:
   - protocol: TCP
     port: 5432
+    targetPort: 5432
