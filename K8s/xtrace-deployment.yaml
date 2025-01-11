@@ -21,9 +21,9 @@ spec:
         - name: POSTGRES_DB
           value: "xtrace"
         - name: POSTGRES_USER
-          value: "postgres"
+          value: ""
         - name: POSTGRES_PASSWORD
-          value: "BrainFog@1996"
+          value: ""
 ---
 apiVersion: v1
 kind: Service
