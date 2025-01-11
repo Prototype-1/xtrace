@@ -62,9 +62,10 @@ func createRazorpayOrder() error {
 }
 
 func main() {
+
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+		log.Fatal("Error loading .env file:", err)
+	}	
 
 	if err := createRazorpayOrder(); err != nil {
 		fmt.Printf("Error: %v\n", err)

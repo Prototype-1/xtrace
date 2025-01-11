@@ -26,6 +26,8 @@ WORKDIR /app
 # Copy the Go binary from the build stage
 COPY --from=build /app/xtrace .
 
+COPY ./cmd/.env /app/
+
 # Set the binary to be executable
 RUN chmod +x ./xtrace
 
