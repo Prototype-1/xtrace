@@ -57,3 +57,5 @@ debug/
 # Windows specific
 $RECYCLE.BIN/
 System Volume Information/
+
+.yaml
