@@ -59,3 +59,6 @@ $RECYCLE.BIN/
 System Volume Information/
 
 K8s/xtrace-secrets.yaml
+K8s/xtrace-db-deployment.yaml
+K8s/xtrace-app-deployment.yaml
+K8s/hpa.yaml
