@@ -58,7 +58,7 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		role := c.GetString("role")
 		if role != "admin" {
-			c.JSON(http.StatusForbidden, "Seems like you don't have the Admin Rights !!!")
+			c.JSON(http.StatusForbidden, "Seems like you don't have the Admin Rights!!!")
 			c.Abort()
 			return
 		}
@@ -70,7 +70,7 @@ func UserAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		role := c.GetString("role")
 		if role != "user" {
-			c.JSON(http.StatusForbidden, "Your are not an ordinary user, please login as the Admin.")
+			c.JSON(http.StatusForbidden, "Seems like you're are not an ordinary user, please login as the Admin!!!")
 			c.Abort()
 			return
 		}
