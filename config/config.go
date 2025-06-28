@@ -52,19 +52,34 @@ func Connect() {
     if err != nil {
         log.Fatalf("Error connecting to database: %v", err)
     }
-
-    // Log successful connection
     log.Println("Successfully connected to the database")
 
-    // Run migrations
     err = DB.AutoMigrate(
-        &models.User{}, &models.Booking{}, &models.Category{}, &models.Coupon{}, &models.Invoice{}, &models.NolCardTopup{}, &models.RazorpayPayment{}, &models.Route{}, &models.Subscription{}, &models.SubscriptionPlan{}, &models.UserSession{}, &models.OTP{}, &models.Wallet{}, &models.WalletTransaction{}, &models.NolCard{}, &models.UserFavorite{}, &models.Stop{}, &models.RouteStop{}, &models.OrderedStop{}, &models.FareRule{}, &models.StopDuration{}, 
+        &models.User{}, 
+        &models.Booking{}, 
+        &models.Category{}, 
+        &models.Coupon{}, 
+        &models.Invoice{}, 
+        &models.NolCardTopup{}, 
+        &models.RazorpayPayment{}, 
+        &models.Route{}, 
+        &models.Subscription{}, 
+        &models.SubscriptionPlan{}, 
+        &models.UserSession{}, 
+        &models.OTP{}, 
+        &models.Wallet{}, 
+        &models.WalletTransaction{}, 
+        &models.NolCard{}, 
+        &models.UserFavorite{}, 
+        &models.Stop{}, 
+        &models.RouteStop{}, 
+        &models.OrderedStop{}, 
+        &models.FareRule{}, 
+        &models.StopDuration{}, 
     )
     if err != nil {
         log.Fatalf("Error running migrations: %v", err)
     }
-
-    // Log successful migration
     log.Println("Database migration completed")
 }
 
